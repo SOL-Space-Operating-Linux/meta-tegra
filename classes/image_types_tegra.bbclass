@@ -162,7 +162,22 @@ tegraflash_create_flash_config_tegra186() {
         -e"s,EKSFILE,eks.img," \
         -e"s,FBTYPE,data," -e"s,FBSIGN,false," -e"/FBFILE/d" \
         -e"s,KERNELDTB-NAME,kernel-dtb," -e"s,KERNELDTB-FILE,${DTBFILE}," \
-        -e"$apptag" -e"s,APPSIZE,${ROOTFSPART_SIZE}," \
+        -e"s,APPSIZE, APP_REPLACE </size>\n \
+            <file_system_attribute> 0 </file_system_attribute>\n \
+            <allocation_attribute> 0x8 </allocation_attribute>\n \
+            <percent_reserved> 0 </percent_reserved>\n \
+            <align_boundary> 4096 </align_boundary>\n \
+            <unique_guid>  </unique_guid>\n \
+            <filename> APPFILE </filename>\n \
+            <description> **Required.** Contains the rootfs. This partition must be defined\n \
+              after `primary_GPT` so that it can be accessed as the fixed known special device\n \
+              `/dev/mmcblk0p2`. </description>\n \
+        </partition>\n \
+        <partition name=\"APP_b\" type=\"data\">\n \
+            <allocation_policy> sequential </allocation_policy>\n \
+            <filesystem_type> basic </filesystem_type>\n \
+            <size> APP_REPLACE," \
+        -e"s,APP_REPLACE,${ROOTFSPART_SIZE}," -e"s,APP_REPLACE,${ROOTFSPART_SIZE}," -e"$apptag" -e"$apptag" \
         -e"s,RECNAME,recovery," -e"s,RECSIZE,66060288," -e"s,RECDTB-NAME,recovery-dtb," -e"s,BOOTCTRLNAME,kernel-bootctrl," \
         -e"/RECFILE/d" -e"/RECDTB-FILE/d" -e"/BOOTCTRL-FILE/d" \
         -e"s,PPTSIZE,2097152," \

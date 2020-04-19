@@ -29,8 +29,13 @@ if [ -n "$wait" -a ! -b "${rootdev}" ]; then
 	count=`expr $count + 1`
     done
 fi
+
+echo "Creating ramd disk"
+mkdir -p /mnt/ramdisk
+mount -t tmpfs -o size=2048m tmpfs /mnt/ramdisk
 echo "Mounting ${rootdev}..."
 mount -t ext4 -o "$opt" "${rootdev}" /mnt || exec sh
+
 echo "Switching to rootfs on ${rootdev}..."
 mount --move /sys  /mnt/sys
 mount --move /proc /mnt/proc
