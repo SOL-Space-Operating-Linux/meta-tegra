@@ -1,5 +1,6 @@
 DESCRIPTION = "Generates a bootloader update payload for use with nv_update_engine when using U-Boot on tegra186 platforms."
 LICENSE = "MIT"
+HOMEPAGE = "https://github.com/OE4T/meta-tegra"
 
 COMPATIBLE_MACHINE = "(tegra)"
 
@@ -31,6 +32,15 @@ do_deploy() {
 		    oe_make_bup_payload ${DEPLOY_DIR_IMAGE}/u-boot-${type}.${UBOOT_SUFFIX}
                     install -d ${DEPLOYDIR}
                     install -m 644 ${WORKDIR}/bup-payload/bl_update_payload ${DEPLOYDIR}/u-boot-${type}.${UBOOT_SUFFIX}.bup-payload
+		    for f in ${WORKDIR}/bup-payload/*_only_payload; do
+			[ -e $f ] || continue
+			sfx=$(basename $f _payload)
+			install -m 0644 $f ${DEPLOYDIR}/u-boot-${type}.${UBOOT_SUFFIX}.$sfx.bup-payload
+			ln -sf u-boot-${type}.${UBOOT_SUFFIX}.$sfx.bup-payload ${DEPLOYDIR}/${UBOOT_IMAGE}-${type}.$sfx.bup-payload
+			ln -sf u-boot-${type}.${UBOOT_SUFFIX}.$sfx.bup-payload ${DEPLOYDIR}/${UBOOT_IMAGE}.$sfx.bup-payload
+			ln -sf u-boot-${type}.${UBOOT_SUFFIX}.$sfx.bup-payload ${DEPLOYDIR}/${UBOOT_BINARY}-${type}.$sfx.bup-payload
+			ln -sf u-boot-${type}.${UBOOT_SUFFIX}.$sfx.bup-payload ${DEPLOYDIR}/${UBOOT_BINARY}.$sfx.bup-payload
+		    done
                     cd ${DEPLOYDIR}
                     ln -sf u-boot-${type}.${UBOOT_SUFFIX}.bup-payload ${UBOOT_IMAGE}-${type}.bup-payload
                     ln -sf u-boot-${type}.${UBOOT_SUFFIX}.bup-payload ${UBOOT_IMAGE}.bup-payload
@@ -47,10 +57,16 @@ do_deploy() {
         rm -f ${DEPLOYDIR}/${UBOOT_BINARY}.bup-payload
         install -m 644 ${WORKDIR}/bup-payload/bl_update_payload ${DEPLOYDIR}/${UBOOT_IMAGE}.bup-payload
         ln -sf ${UBOOT_IMAGE}.bup-payload ${DEPLOYDIR}/${UBOOT_BINARY}.bup-payload
+	for f in ${WORKDIR}/bup-payload/*_only_payload; do
+	    [ -e $f ] || continue
+	    sfx=$(basename $f _payload)
+	    install -m 0644 $f ${DEPLOYDIR}/${UBOOT_IMAGE}.$sfx.bup-payload
+	    ln -sf ${UBOOT_IMAGE}.$sfx.bup-payload ${DEPLOYDIR}/${UBOOT_BINARY}.$sfx.bup-payload
+	done
     fi
 }
 do_deploy[depends] += "virtual/bootloader:do_deploy virtual/kernel:do_deploy ${SOC_FAMILY}-flashtools-native:do_populate_sysroot"
-do_deploy[depends] += "tegra-redundant-boot-base:do_populate_sysroot tegra-bootfiles:do_populate_sysroot nv-tegra-release:do_populate_sysroot"
+do_deploy[depends] += "tegra-redundant-boot-base:do_populate_sysroot tegra-bootfiles:do_populate_sysroot"
 do_deploy[depends] += "coreutils-native:do_populate_sysroot cboot:do_deploy virtual/secure-os:do_deploy"
 addtask deploy before do_build
 

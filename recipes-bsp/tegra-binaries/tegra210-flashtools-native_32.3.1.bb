@@ -14,6 +14,10 @@ SSTATE_SWSPEC = "sstate:tegra-binaries-native::${PV}:${PR}::${SSTATE_VERSION}:"
 STAMP = "${STAMPS_DIR}/work-shared/L4T-native-${SOC_FAMILY}-${PV}-${PR}"
 STAMPCLEAN = "${STAMPS_DIR}/work-shared/L4T-native-${SOC_FAMILY}-${PV}-*"
 
+SRC_URI += "\
+           file://0003-Convert-BUP_generator.py-to-Python3.patch \
+           file://0009-Update-tegraflash_internal.py-for-Python-3.9.patch \
+           "
 S = "${WORKDIR}/Linux_for_Tegra"
 B = "${WORKDIR}/build"
 
@@ -54,3 +58,5 @@ do_install() {
     install -m 0755 ${S}/bootloader/chkbdinfo ${D}${BINDIR}
     install -m 0755 ${S}/pkc/mkpkc ${D}${BINDIR}
 }
+
+INHIBIT_SYSROOT_STRIP = "1"

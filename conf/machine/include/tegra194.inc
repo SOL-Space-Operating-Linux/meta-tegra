@@ -13,7 +13,6 @@ MACHINE_EXTRA_RDEPENDS = "tegra-nvpmodel tegra-nvphs tegra-nvs-service tegra-nvs
 MACHINE_EXTRA_RRECOMMENDS = "kernel-module-nvgpu"
 
 INITRD_IMAGE ?=	"tegra-minimal-initramfs"
-IMAGE_CLASSES_append = " image_types_cboot"
 INITRD_FSTYPES ?= "cpio.gz.cboot cpio.gz.cboot.bup-payload"
 IMAGE_UBOOT ?= ""
 
@@ -34,7 +33,7 @@ TEGRA_CHIPREV ?= "2"
 TEGRA_BUPGEN_SPECS ?= "fab=400;boardsku=0001;boardrev=H.0 \
                        fab=400;boardsku=0001;boardrev=J.0 \
                        fab=400;boardsku=0001;boardrev=L.0 \
-                       fab=400;boardsku=0004;boardrev=F.0"
+                       fab=400;boardsku=0004;boardrev="
 
 TEGRA_SIGNING_ENV = "CHIPREV=${TEGRA_CHIPREV} BOARDID=${TEGRA_BOARDID} FAB=${TEGRA_FAB} BOARDSKU=${TEGRA_BOARDSKU} BOARDREV=${TEGRA_BOARDREV}"
 

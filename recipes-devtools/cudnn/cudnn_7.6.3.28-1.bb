@@ -1,5 +1,6 @@
 SUMMARY = "NVIDIA CUDA Deep Neural Network library"
 LICENSE = "Proprietary"
+HOMEPAGE = "https://developer.nvidia.com/cudnn"
 LIC_FILES_CHKSUM = "file://usr/include/aarch64-linux-gnu/cudnn_v7.h;endline=48;md5=b48d68d7e5eb6b858c229fdb89171636"
 
 inherit nvidia_devnet_downloads container-runtime-csv
@@ -38,10 +39,12 @@ do_compile() {
 do_install() {
     install -d ${D}${includedir} ${D}${libdir} ${D}${datadir} ${D}${prefix}/src
     install -m 0644 ${S}/usr/include/aarch64-linux-gnu/*.h ${D}${includedir}
+    ln -s cudnn_v7.h ${D}${includedir}/cudnn.h
     install -m 0644 ${S}/usr/lib/aarch64-linux-gnu/libcudnn.so.${BASEVER} ${D}${libdir}/
     install -m 0644 ${S}/usr/lib/aarch64-linux-gnu/libcudnn_static_v7.a ${D}${libdir}/
     ln -s libcudnn.so.${BASEVER} ${D}${libdir}/libcudnn.so.7
     ln -s libcudnn.so.${BASEVER} ${D}${libdir}/libcudnn.so
+    ln -s libcudnn_static_v7.a ${D}${libdir}/libcudnn_static.a
     cp --preserve=mode,timestamps --recursive ${S}/usr/share/* ${D}${datadir}/
     rm -rf ${D}${datadir}/lintian
     cp --preserve=mode,timestamps --recursive ${S}/usr/src/* ${D}${prefix}/src/
